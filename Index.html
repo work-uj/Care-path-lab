@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Care Path Lab | Book a Test</title>
+<style>
+:root{--navy:#071d49;--red:#ed1c24;--yellow:#ffd21c}
+*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#14264b;font-family:Arial,sans-serif}
+header{background:linear-gradient(135deg,#06183e,#123f85);color:#fff;padding:22px 18px;text-align:center}
+.logo{font-size:27px;font-weight:900}.logo b{color:#ef3038}.sub{font-size:13px;margin-top:5px;opacity:.9}
+.hero{background:#fff;text-align:center;padding:25px 18px 20px}.offer{display:inline-block;background:var(--red);color:#fff;padding:8px 18px;border-radius:25px;font-weight:900}.hero h1{font-size:36px;line-height:1.05;margin:14px 0 6px}.hero h1 span{color:var(--red)}.price{font-size:55px;font-weight:900}.price small{font-size:22px}
+.wrap{max-width:720px;margin:auto;padding:18px}.card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 8px 28px #0b2a5b12;margin-bottom:18px}
+h2{margin:0 0 15px}label{display:block;font-weight:700;margin:12px 0 6px}input,select,textarea{width:100%;padding:14px;border:1px solid #d5dce8;border-radius:10px;font-size:16px}textarea{min-height:80px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{width:100%;border:0;border-radius:12px;background:var(--red);color:white;font-size:18px;font-weight:900;padding:16px;margin-top:18px}.btn:disabled{opacity:.6}.status{text-align:center;font-weight:700;margin-top:12px}.success{color:#16833b}.error{color:#c9151c}
+.info{background:#071d49;color:#fff;border-radius:15px;padding:18px;text-align:center}.info strong{display:block;color:var(--yellow);font-size:26px;margin:5px}
+footer{text-align:center;padding:18px;color:#68758b;font-size:12px}
+@media(max-width:600px){.row{grid-template-columns:1fr}.hero h1{font-size:31px}}
+</style>
+</head>
+<body>
+<header><div class="logo">Thyro<b>care</b> | Care Path Lab</div><div class="sub">YOUR HEALTH, OUR PRIORITY</div></header>
+<section class="hero"><div class="offer">SPECIAL HEALTH OFFER</div><h1>FULL BODY <span>HEALTH CHECKUP</span></h1><div class="price"><small>₹</small>1599</div><div>Easy online booking • Home sample collection available</div></section>
+
+<main class="wrap">
+<div class="card">
+<h2>📋 Book Your Test</h2>
+<form id="bookingForm">
+<label>Patient Name *</label><input id="name" required placeholder="Enter patient name">
+<div class="row">
+<div><label>Mobile Number *</label><input id="phone" required inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number"></div>
+<div><label>Age</label><input id="age" type="number" min="1" max="120" placeholder="Age"></div>
+</div>
+<label>Test / Package *</label>
+<select id="test" required>
+<option value="">Select test</option>
+<option>Full Body Health Checkup - ₹1599</option>
+<option>Thyroid Profile</option><option>Diabetes Profile</option><option>Lipid Profile</option>
+<option>Liver Function Test</option><option>Kidney Function Test</option><option>Other Test / Package</option>
+</select>
+<div class="row">
+<div><label>Preferred Date *</label><input id="date" type="date" required></div>
+<div><label>Preferred Time</label><select id="time"><option>Morning</option><option>Afternoon</option><option>Evening</option></select></div>
+</div>
+<label>Sample Collection *</label>
+<select id="collection"><option>Home Sample Collection</option><option>Visit Care Path Lab</option></select>
+<label>Address / Notes</label><textarea id="address" placeholder="For home collection, enter complete address"></textarea>
+<button class="btn" id="submitBtn">BOOK TEST NOW</button>
+<div id="status" class="status"></div>
+</form>
+</div>
+
+<div class="info">📞 Call / WhatsApp<strong>8720022922</strong>📍 625, Baldeobagh, Shop beside Balaji Communication</div>
+</main>
+<footer>© 2026 Care Path Lab • Thyrocare Collection Centre</footer>
+
+<script>
+// Paste your deployed Google Apps Script Web App URL below.
+const GOOGLE_SCRIPT_URL = "PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE";
+document.getElementById("date").min=new Date().toISOString().split("T")[0];
+
+document.getElementById("bookingForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const status=document.getElementById("status"), btn=document.getElementById("submitBtn");
+ if(GOOGLE_SCRIPT_URL.includes("PASTE_YOUR")){status.className="status error";status.textContent="Booking system is not connected yet. Please add your Google Sheet Web App URL.";return}
+ const data={
+   patientName:document.getElementById("name").value.trim(),
+   phone:document.getElementById("phone").value.trim(),
+   age:document.getElementById("age").value.trim(),
+   test:document.getElementById("test").value,
+   date:document.getElementById("date").value,
+   time:document.getElementById("time").value,
+   collection:document.getElementById("collection").value,
+   address:document.getElementById("address").value.trim()
+ };
+ btn.disabled=true;btn.textContent="SUBMITTING...";
+ try{
+   await fetch(GOOGLE_SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)});
+   status.className="status success";
+   status.textContent="✅ Booking received! Care Path Lab will contact you shortly.";
+   e.target.reset();
+ }catch(err){
+   status.className="status error";status.textContent="Unable to submit. Please WhatsApp 8720022922.";
+ }finally{btn.disabled=false;btn.textContent="BOOK TEST NOW"}
+});
+</script>
+</body>
+</html>
